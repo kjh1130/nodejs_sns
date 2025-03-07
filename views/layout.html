@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile-wrap">
+            <div class="profile">
+                {% if user and user.id %}
+                <div class="user-name">{{'Hello '+user.nick+'!'}}</div>
+                <div class="half">
+                    <div>Following</div>
+                    <div class="count following-count">{{followingCount}}</div>
+                </div>
+                <div class="half">
+                    <div>Follower</div>
+                    <div class="count follower-count">{{followerCount}}</div>
+                </div>
+                <input id="my-id" type="hidden" value="{{user.id}}">
+                <a id="my-profile" href="/profile" class="btn">My Profile</a>
+                <a id="logout" href="/auth/logout" class="btn">Log out</a>
+                {% else %}
+                <form id="login-form" action="/auth/login" method="post">
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" required autofocus>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password" required>
+                    </div>
+                    <a id="join" href="/join" class="btn">Create an Account</a>
+                    <button id="login" type="submit" class="btn">Log in</button>
+                    <a id="kakao" href="/auth/kakao" class="btn">Kakaotalk</a>
+                </form>
+                {% endif %}
+            </div>
+            <footer>
+                Made by&nbsp;
+                <a href="https://www.kjh1130.com" target="_blank">kjh1130</a>
+            </footer>
+        </div>
+        {% block content %}
+        {% endblock %}
+    </div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    window.onload = () => {
+        if (new URL(location.href).searchParams.get('loginError')) {
+            alert(new URL(location.href).searchParams.get('loginError'));
+        }
+    };
+</script>
+{% block script %}
+{% endblock %}
+</body>
+</html>
