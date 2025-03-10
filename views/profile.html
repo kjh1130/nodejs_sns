@@ -6,7 +6,11 @@
     <h2>Following</h2>
     {% if user.Followings %}
     {% for following in user.Followings %}
-    <div>{{following.nick}}</div>
+    <div>
+      <input id="following-id" type="hidden" value="{{following.id}}"/>
+      <div class="following-nick">{{following.nick}}</div>
+      <button class="twit-follow-cancel">Unfollow</button>
+    </div>
     {% endfor %}
     {% endif %}
   </div>
@@ -19,4 +23,23 @@
     {% endif %}
   </div>
 </div>
+<script>
+  document.querySelectorAll('.twit-follow-cancel').forEach(function(tag){
+    tag.addEventListener('click',function(){
+      const myId = document.querySelector('#my-id');
+      if(myId){
+        const userId=tag.parentNode.querySelector('#following-id').value;
+        if(confirm('Will you unfollow?')) {
+          axios.post(`/user/${userId}/unfollow`)
+                  .then(() => {
+                    location.reload();
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                  });
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

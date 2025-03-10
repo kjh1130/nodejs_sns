@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const {afterUploadImage, uploadPost} = require('../controllers/post');
 const {isLoggedIn} = require('../middlewares');
+const Post = require('../models/post');
 
 const router = express.Router();
 
@@ -34,5 +35,16 @@ router.post('/img',isLoggedIn,upload.single('img'), afterUploadImage);
 //POST /post
 const upload2 = multer();
 router.post('/', isLoggedIn, upload2.none(), uploadPost);
+
+router.post('/:id/delete',async(req,res,next) => {
+    try{
+        const post=await Post.findOne({where:{id:req.params.id, userId:req.user.id}});
+        await post.destroy();
+        res.redirect('/')
+    } catch(error) {
+        console.error(error);
+        next(error);
+    }
+})
 
 module.exports = router;

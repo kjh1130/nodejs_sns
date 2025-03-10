@@ -32,8 +32,13 @@
       <div class="twit-author">{{twit.User.nick}}</div>
       {% if not followingIdList.includes(twit.User.id) and twit.User.id !== user.id %}
       <button class="twit-follow">Follow</button>
+      {% elif followingIdList.includes(twit.User.id) and twit.User.id !== user.id %}
+      <button class="twit-unfollow">Unfollow</button>
       {% endif %}
       <div class="twit-content">{{twit.content}}</div>
+      {% if twit.User.id == user.id %}
+      <button class="twit-delete btn">Delete</button>
+      {% endif %}
       {% if twit.img %}
       <div class="twit-img"><img src="{{twit.img}}" alt="thumbnail"></div>
       {% endif %}
@@ -69,6 +74,45 @@
         if(userId !== myId.value) {
           if (confirm('Do you want to follow?')) {
             axios.post(`/user/${userId}/follow`)
+                    .then(() => {
+                      location.reload();
+                    })
+                    .catch((err) => {
+                      console.error(err);
+                    });
+          }
+        }
+      }
+    });
+  });
+  document.querySelectorAll('.twit-unfollow').forEach(function(tag) {
+    tag.addEventListener('click', function() {
+      const myId = document.querySelector('#my-id');
+      if(myId) {
+        const userId = tag.parentNode.querySelector('.twit-user-id').value;
+        if(userId !== myId.value) {
+          if(confirm('Do you want to unfollow?')) {
+            axios.post(`/user/${userId}/unfollow`)
+                    .then(() => {
+                      location.reload();
+                    })
+                    .catch((err) => {
+                      console.error(err);
+                    });
+          }
+        }
+      }
+    });
+  });
+  document.querySelectorAll('.twit-delete').forEach(function(tag) {
+    tag.addEventListener('click',function() {
+      const myId = document.querySelector('#my-id');
+      if(myId) {
+        const twitId = tag.parentNode.querySelector('.twit-id').value;
+        const twitUserId = tag.parentNode.querySelector('.twit-user-id').value;
+        if(myId.value == twitUserId) {
+          if(confirm('Delete this post?')) {
+            axios.post(`/post/${twitId}/delete`)
                     .then(() => {
                       location.reload();
                     })
