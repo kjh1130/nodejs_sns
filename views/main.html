@@ -39,6 +39,17 @@
       {% if twit.User.id == user.id %}
       <button class="twit-delete btn">Delete</button>
       {% endif %}
+      {%set isLiked = 'false' %}
+      {%for like in twit.Liker%}
+      {%if like.id == user.id%}
+      {%set isLiked = 'true'%}
+      {%endif%}
+      {%endfor%}
+      {%if isLiked == 'false'%}
+      <button class="like btn abled">Like</button>
+      {%elif isLiked == 'true'%}
+      <button class="unlike btn">Cancel</button>
+      {%endif%}
       {% if twit.img %}
       <div class="twit-img"><img src="{{twit.img}}" alt="thumbnail"></div>
       {% endif %}
@@ -121,6 +132,36 @@
                     });
           }
         }
+      }
+    });
+  });
+  document.querySelectorAll('.like').forEach(function(tag) {
+    tag.addEventListener('click', function() {
+      const myId = document.querySelector('#my-id');
+      const twitId = tag.parentNode.querySelector('.twit-id').value;
+      if (myId) {
+        axios.post(`/post/${twitId}/like`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+      }
+    });
+  });
+  document.querySelectorAll('.unlike').forEach(function(tag) {
+    tag.addEventListener('click', function() {
+      const myId = document.querySelector('#my-id');
+      const twitId = tag.parentNode.querySelector('.twit-id').value;
+      if (myId) {
+        axios.delete(`/post/${twitId}/unlike`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
       }
     });
   });
